@@ -78,11 +78,11 @@ class Ibex():
         return any(remove)
 
 
-    def get_entities(self, docs: List[str], language: str='english'):
+    def get_entities(self, document: str, language: str='english'):
         ''' Takes a document and returns a list of extracted entities '''
 
-        if isinstance(docs, str):
-            docs = [docs]
+        if isinstance(document, List):
+            document = " ".join(document)
         # if language given is not the name of a spacy parser, try to convert it to one
         parser_name = language if language in LANG_TO_PARSER.values() else LANG_TO_PARSER.get(language.lower())
         if not parser_name:
@@ -105,11 +105,11 @@ class Ibex():
             ents = set(ent.text for ent in doc.ents if not self.filter_entity(ent))  # extract entities
             return list(ents)
 
-        return [get_ents(doc) for doc in docs]
+        return get_ents(document)
 
 
 if __name__ == '__main__':
-    text = ['The Trump administration struggled on Monday to defend its policy of separating parents from their sons and daughters at the southern US border amid growing national outrage and the release of of sobbing children.']
+    text = 'The Trump administration struggled on Monday to defend its policy of separating parents from their sons and daughters at the southern US border amid growing national outrage and the release of of sobbing children.'
     client = Ibex()
     result = client.get_entities(text)
     print(result)
