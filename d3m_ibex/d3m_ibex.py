@@ -51,14 +51,13 @@ LANG_TO_PARSER = {
 
 class Ibex():
 
-    def __init__(self, parser_installation_files = None):
-        if parser_installation_files:
-            for installation_file in parser_installation_files:
-                try:
-                    print("Installing file: %s" % installation_file)
-                    os.system("pip3 install {0}".format(installation_file))
-                except Exception as e:
-                    print("Problem installing file: %s" % installation_file)
+    def __init__(self, parser_installation_file = None):
+        if parser_installation_file:
+            try:
+                print("Installing file: %s" % parser_installation_file)
+                os.system("pip3 install {0}".format(parser_installation_file))
+            except Exception as e:
+                print("Problem installing file: %s" % parser_installation_file)
         pass
 
     def filter_entity(self, entity):
@@ -120,6 +119,6 @@ class Ibex():
 if __name__ == '__main__':
     text = 'The Trump administration struggled on Monday to defend its policy of separating parents from their sons and daughters at the southern US border amid growing national outrage and the release of of sobbing children.'
     #client = Ibex()
-    client = Ibex(parser_installation_files = ['/tmp/f54a6e6a2ff34c1adb1a2eabeb67b170933453ed878125c76813dc2e31c8cf8a/en_core_web_md-2.1.0a7.tar.gz', '/tmp/06d827f4822d06308b2a8d66d5ac526dec521d041826405cd5ade0f4d587b656/es_core_news_md-2.1.0a7.tar.gz'])
+    client = Ibex(parser_installation_file = '/tmp/f54a6e6a2ff34c1adb1a2eabeb67b170933453ed878125c76813dc2e31c8cf8a/en_core_web_md-2.1.0a7.tar.gz')
     result = client.get_entities(text)
     print(result)
