@@ -4,6 +4,8 @@ from typing import List
 import re
 import string
 import spacy
+import logging
+import traceback
 
 REGEX_FILTERS = {
     re.compile('RT @\w+'): '',  # retweet (filter before removing mentions)
@@ -18,6 +20,8 @@ REGEX_FILTERS = {
 
 SPACES_REGEX = re.compile('  +')
 
+logger = logging.getLogger('ibex_d3m_wrapper')
+logger.setLevel(logging.DEBUG)
 
 def prep_text(text: str):
     ''' preprocess text, removing content irrelevant for entity recognition or topic selection'''
@@ -47,7 +51,12 @@ LANG_TO_PARSER = {
     'spanish': 'es_core_news_md'
 }
 
-
+def log_traceback(ex, ex_traceback=None):
+    if ex_traceback is None:
+        ex_traceback = ex.__traceback__
+    tb_lines = [ line.rstrip('\n') for line in
+                 traceback.format_exception(ex.__class__, ex, ex_traceback)]
+    logger.log(tb_lines)
 
 class Ibex():
 
@@ -101,9 +110,11 @@ class Ibex():
             try:
                 PARSERS[parser_name] = spacy.load(parser_name)
             except Exception as e:
+                print('Print problem loading parser.')
+                log_traceback(e)
                 # Try downloading the needed spacy parser
                 # install spacy parsers
-                os.system("python3 -m spacy download {0}".format(LANG_TO_PARSER[language]))
+                #os.system("python3 -m spacy download {0}".format(LANG_TO_PARSER[language]))
                 PARSERS[parser_name] = spacy.load(parser_name)
 
         def get_ents(doc):
