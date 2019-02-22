@@ -56,18 +56,14 @@ def log_traceback(ex, ex_traceback=None):
         ex_traceback = ex.__traceback__
     tb_lines = [ line.rstrip('\n') for line in
                  traceback.format_exception(ex.__class__, ex, ex_traceback)]
-    logger.log(tb_lines)
+    if len(tb_lines) >1  and len(tb_lines[0])>1:
+        logger.log(tb_lines)
 
 class Ibex():
 
     def __init__(self, parser_installation_file = None):
         if parser_installation_file:
-            try:
-                print("Installing file: %s" % parser_installation_file)
-                os.system("pip3 install {0}".format(parser_installation_file))
-            except Exception as e:
-                print("Problem installing file: %s" % parser_installation_file)
-        pass
+            self.parser_installation_file = parser_installation_file
 
     def filter_entity(self, entity):
         ''' filter entities identified by spacy. For single-word entities, remove
@@ -108,6 +104,16 @@ class Ibex():
         # if requested parser is not already in memory, try to load from spacy
         if parser_name not in PARSERS:
             try:
+                if self.parser_installation_file:
+                    try:
+                        print("Uninstalling thinc and cymem")
+                        os.system("pip3 uninstall thinc")
+                        os.system("pip3 uninstall cymem")
+                        print("Installing file: %s" % self.parser_installation_file)
+                        os.system("pip3 install {0}".format(self.parser_installation_file))
+                    except Exception as e:
+                        print("Problem installing file: %s" % self.parser_installation_file)
+                        pass
                 PARSERS[parser_name] = spacy.load(parser_name)
             except Exception as e:
                 print('Print problem loading parser.')
