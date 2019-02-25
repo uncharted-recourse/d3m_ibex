@@ -109,18 +109,26 @@ class Ibex():
                         print("Uninstalling thinc and cymem")
                         os.system("pip3 uninstall thinc")
                         os.system("pip3 uninstall cymem")
+                        print("Installing spacy.")
+                        os.system("pip3 install spacy")
                         print("Installing file: %s" % self.parser_installation_file)
                         os.system("pip3 install {0}".format(self.parser_installation_file))
                     except Exception as e:
                         print("Problem installing file: %s" % self.parser_installation_file)
+                        print("Trying again")
                         pass
                 PARSERS[parser_name] = spacy.load(parser_name)
             except Exception as e:
                 print('Print problem loading parser.')
-                log_traceback(e)
+                print("Trying again.")
                 # Try downloading the needed spacy parser
                 # install spacy parsers
                 #os.system("python3 -m spacy download {0}".format(LANG_TO_PARSER[language]))
+                PARSERS[parser_name] = spacy.load(parser_name)
+                print("Installing spacy.")
+                os.system("pip3 install spacy")
+                print("Installing file: %s" % self.parser_installation_file)
+                os.system("pip3 install {0}".format(self.parser_installation_file))
                 PARSERS[parser_name] = spacy.load(parser_name)
 
         def get_ents(doc):
