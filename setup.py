@@ -18,6 +18,6 @@ setup(
     install_requires=[
         'spacy>=2.0.11',
         'flask>=1.0.2',
-        'nose>=1.3.7',
+        'nose>=1.3.7'
     ],
 )

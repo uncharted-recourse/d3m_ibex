@@ -1,11 +1,13 @@
 ''' Extract named entities from documents '''
-import os
+import os, sys
 from typing import List
 import re
 import string
-import spacy
 import logging
 import traceback
+import spacy
+
+
 
 REGEX_FILTERS = {
     re.compile('RT @\w+'): '',  # retweet (filter before removing mentions)
@@ -61,9 +63,36 @@ def log_traceback(ex, ex_traceback=None):
 
 class Ibex():
 
-    def __init__(self, parser_installation_file = None):
+
+    def __init__(self, parser_installation_file = None, language = None):
         if parser_installation_file:
             self.parser_installation_file = parser_installation_file
+            try:
+                print("Uninstalling thinc and cymem")
+                os.system("pip3 uninstall thinc")
+                os.system("pip3 uninstall cymem")
+                print("Installing spacy.")
+                os.system("pip3 install spacy")
+                print("Installing file: %s" % self.parser_installation_file)
+                os.system("pip3 install {0}".format(self.parser_installation_file))
+
+            except Exception as e:
+                print("Problem installing file: %s" % self.parser_installation_file)
+                pass
+                
+            if language == 'spanish':
+                try:
+                    import es_core_news_md
+                except ImportError:
+                    print("Error importing es_core_news_md")
+                    sys.exit(-1)
+            else:
+                try:
+                    import en_core_web_md
+                except ImportError:
+                    print("Error importing en_core_web_md")
+                    sys.exit(-1)
+
 
     def filter_entity(self, entity):
         ''' filter entities identified by spacy. For single-word entities, remove
@@ -105,31 +134,10 @@ class Ibex():
         if parser_name not in PARSERS:
             try:
                 if self.parser_installation_file:
-                    try:
-                        print("Uninstalling thinc and cymem")
-                        os.system("pip3 uninstall thinc")
-                        os.system("pip3 uninstall cymem")
-                        print("Installing spacy.")
-                        os.system("pip3 install spacy")
-                        print("Installing file: %s" % self.parser_installation_file)
-                        os.system("pip3 install {0}".format(self.parser_installation_file))
-                    except Exception as e:
-                        print("Problem installing file: %s" % self.parser_installation_file)
-                        print("Trying again")
-                        pass
-                PARSERS[parser_name] = spacy.load(parser_name)
+                    PARSERS[parser_name] = spacy.load(parser_name)
             except Exception as e:
                 print('Print problem loading parser.')
-                print("Trying again.")
-                # Try downloading the needed spacy parser
-                # install spacy parsers
-                #os.system("python3 -m spacy download {0}".format(LANG_TO_PARSER[language]))
-                PARSERS[parser_name] = spacy.load(parser_name)
-                print("Installing spacy.")
-                os.system("pip3 install spacy")
-                print("Installing file: %s" % self.parser_installation_file)
-                os.system("pip3 install {0}".format(self.parser_installation_file))
-                PARSERS[parser_name] = spacy.load(parser_name)
+                sys.exit(-1)
 
         def get_ents(doc):
             ''' prep, parse, then extract entities from doc text '''
@@ -144,6 +152,12 @@ class Ibex():
 if __name__ == '__main__':
     text = 'The Trump administration struggled on Monday to defend its policy of separating parents from their sons and daughters at the southern US border amid growing national outrage and the release of of sobbing children.'
     #client = Ibex()
-    client = Ibex(parser_installation_file = '/tmp/f54a6e6a2ff34c1adb1a2eabeb67b170933453ed878125c76813dc2e31c8cf8a/en_core_web_md-2.1.0a7.tar.gz')
+    if len(sys.argv)>=2:
+        parser_installation_file = sys.argv[1]
+        language = sys.argv[2]
+    else:
+        parser_installation_file = "en_core_web_md-1.2.1.tar.gz"
+        language = "english"
+    client = Ibex(parser_installation_file = parser_installation_file, language = language)
     result = client.get_entities(text)
     print(result)
