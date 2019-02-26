@@ -80,20 +80,6 @@ class Ibex():
                 print("Problem installing file: %s" % self.parser_installation_file)
                 pass
                 
-            if language == 'spanish':
-                try:
-                    import es_core_news_md
-                    print("Success importing en_core_web_md")
-                except ImportError:
-                    print("Error importing es_core_news_md")
-                    sys.exit(-1)
-            else:
-                try:
-                    import en_core_web_md
-                    print("Success importing en_core_web_md")
-                except ImportError:
-                    print("Error importing en_core_web_md")
-                    sys.exit(-1)
 
 
     def filter_entity(self, entity):
@@ -124,6 +110,20 @@ class Ibex():
 
     def get_entities(self, document: str, language: str='english'):
         ''' Takes a document and returns a list of extracted entities '''
+        if language == 'spanish':
+            try:
+                import es_core_news_md
+                print("Success importing en_core_web_md")
+            except ImportError:
+                print("Error importing es_core_news_md")
+                sys.exit(-1)
+        else:
+            try:
+                import en_core_web_md
+                print("Success importing en_core_web_md")
+            except ImportError:
+                print("Error importing en_core_web_md")
+                sys.exit(-1)
 
         if isinstance(document, List):
             document = " ".join(document)
@@ -136,7 +136,11 @@ class Ibex():
         if parser_name not in PARSERS:
             try:
                 print("Trying to load parser.")
-                PARSERS[parser_name] = spacy.load(parser_name)
+                if language == 'spanish':
+                    PARSERS[parser_name] = es_core_news_md.load()
+                else:
+                    PARSERS[parser_name] = en_core_web_md.load()
+                #PARSERS[parser_name] = spacy.load(parser_name)
             except Exception:
                 logger.exception("Problem loading parser")
                 sys.exit(-1)
