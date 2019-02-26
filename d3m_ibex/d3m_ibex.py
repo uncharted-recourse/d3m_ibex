@@ -69,12 +69,12 @@ class Ibex():
             self.parser_installation_file = parser_installation_file
             try:
                 print("Uninstalling thinc and cymem")
-                os.system("pip3 uninstall thinc")
-                os.system("pip3 uninstall cymem")
+                os.system("pip3 --no-input uninstall thinc")
+                os.system("pip3 --no-input uninstall cymem")
                 print("Installing spacy.")
-                os.system("pip3 install spacy")
+                os.system("pip3 --no-input install spacy")
                 print("Installing file: %s" % self.parser_installation_file)
-                os.system("pip3 install {0}".format(self.parser_installation_file))
+                os.system("pip3 --no-input install {0}".format(self.parser_installation_file))
 
             except Exception as e:
                 print("Problem installing file: %s" % self.parser_installation_file)
@@ -83,12 +83,14 @@ class Ibex():
             if language == 'spanish':
                 try:
                     import es_core_news_md
+                    print("Success importing en_core_web_md")
                 except ImportError:
                     print("Error importing es_core_news_md")
                     sys.exit(-1)
             else:
                 try:
                     import en_core_web_md
+                    print("Success importing en_core_web_md")
                 except ImportError:
                     print("Error importing en_core_web_md")
                     sys.exit(-1)
@@ -133,11 +135,13 @@ class Ibex():
         # if requested parser is not already in memory, try to load from spacy
         if parser_name not in PARSERS:
             try:
-                if self.parser_installation_file:
-                    PARSERS[parser_name] = spacy.load(parser_name)
-            except Exception as e:
-                print('Print problem loading parser.')
+                print("Trying to load parser.")
+                PARSERS[parser_name] = spacy.load(parser_name)
+            except Exception:
+                logger.exception("Problem loading parser")
                 sys.exit(-1)
+        else:
+            print("Found parser %s in memory" % parser_name)
 
         def get_ents(doc):
             ''' prep, parse, then extract entities from doc text '''
