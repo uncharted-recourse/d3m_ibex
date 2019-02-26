@@ -69,12 +69,12 @@ class Ibex():
             self.parser_installation_file = parser_installation_file
             try:
                 print("Uninstalling thinc and cymem")
-                os.system("pip3 --no-input uninstall thinc")
-                os.system("pip3 --no-input uninstall cymem")
+                os.system("pip3 uninstall --no-input thinc")
+                os.system("pip3 uninstall --no-input cymem")
                 print("Installing spacy.")
-                os.system("pip3 --no-input install spacy")
+                os.system("pip3 install spacy")
                 print("Installing file: %s" % self.parser_installation_file)
-                os.system("pip3 --no-input install {0}".format(self.parser_installation_file))
+                os.system("pip3 install {0}".format(self.parser_installation_file))
 
             except Exception as e:
                 print("Problem installing file: %s" % self.parser_installation_file)
@@ -143,7 +143,18 @@ class Ibex():
                 #PARSERS[parser_name] = spacy.load(parser_name)
             except Exception:
                 logger.exception("Problem loading parser")
-                sys.exit(-1)
+                print("SECOND ROUND: Installing spacy.")
+                os.system("pip3 install spacy")
+                print("Installing file: %s" % self.parser_installation_file)
+                os.system("pip3 install {0}".format(self.parser_installation_file))
+                try:
+                    if language == 'spanish':
+                        PARSERS[parser_name] = es_core_news_md.load()
+                    else:
+                        PARSERS[parser_name] = en_core_web_md.load()
+                except Exception:
+                    logger.exception("SECOND ROUND: Problem loading parser")
+                    sys.exit(-1)
         else:
             print("Found parser %s in memory" % parser_name)
 
