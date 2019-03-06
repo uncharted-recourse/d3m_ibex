@@ -67,18 +67,18 @@ class Ibex():
     def __init__(self, parser_installation_file = None, language = None):
         if parser_installation_file:
             self.parser_installation_file = parser_installation_file
-            try:
-                # print("Uninstalling thinc and cymem")
-                # os.system("pip3 uninstall --no-input thinc")
-                # os.system("pip3 uninstall --no-input cymem")
-                # print("Installing spacy.")
-                # os.system("pip3 install spacy")
-                print("Installing file: %s" % self.parser_installation_file)
-                os.system("pip3 install {0}".format(self.parser_installation_file))
+            # try:
+            #     # print("Uninstalling thinc and cymem")
+            #     # os.system("pip3 uninstall --no-input thinc")
+            #     # os.system("pip3 uninstall --no-input cymem")
+            #     # print("Installing spacy.")
+            #     # os.system("pip3 install spacy")
+            #     print("Installing file: %s" % self.parser_installation_file)
+            #     os.system("pip3 install {0}".format(self.parser_installation_file))
 
-            except Exception as e:
-                print("Problem installing file: %s" % self.parser_installation_file)
-                pass
+            # except Exception as e:
+            #     print("Problem installing file: %s" % self.parser_installation_file)
+            #     pass
                 
 
 
