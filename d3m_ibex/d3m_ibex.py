@@ -143,10 +143,10 @@ class Ibex():
                 #PARSERS[parser_name] = spacy.load(parser_name)
             except Exception:
                 logger.exception("Problem loading parser")
-                print("SECOND ROUND: Installing spacy.")
-                os.system("pip3 install spacy")
-                print("Installing file: %s" % self.parser_installation_file)
-                os.system("pip3 install {0}".format(self.parser_installation_file))
+                print("SECOND ROUND: Try loading again.")
+                # os.system("pip3 install spacy")
+                # print("Installing file: %s" % self.parser_installation_file)
+                # os.system("pip3 install {0}".format(self.parser_installation_file))
                 try:
                     if language == 'spanish':
                         PARSERS[parser_name] = es_core_news_md.load()
