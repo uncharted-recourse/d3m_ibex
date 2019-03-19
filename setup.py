@@ -9,7 +9,7 @@ from setuptools.command.install import install
 
 setup(
     name='d3m_ibex',
-    version='1.1.1',
+    version='1.1.2',
     description='Named entity extraction',
     author='New Knowledge',
     packages=['d3m_ibex'],

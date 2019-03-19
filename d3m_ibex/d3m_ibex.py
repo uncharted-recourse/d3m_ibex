@@ -42,7 +42,7 @@ if os.path.isfile(exclude_path):
         EXCLUDE_WORDS = set(word.strip('\n') for word in exclude_file.readlines())
 else:
     # TODO move to logger
-    print('warning: cannot find exclude_words.txt')
+    logger.warn('warning: cannot find exclude_words.txt')
     EXCLUDE_WORDS = set()
 
 LANGUAGES = ['english', 'spanish']  # 'hungarian', 'french', 'italian'
@@ -64,21 +64,8 @@ def log_traceback(ex, ex_traceback=None):
 class Ibex():
 
 
-    def __init__(self, parser_installation_file = None, language = None):
-        if parser_installation_file:
-            self.parser_installation_file = parser_installation_file
-            # try:
-            #     # print("Uninstalling thinc and cymem")
-            #     # os.system("pip3 uninstall --no-input thinc")
-            #     # os.system("pip3 uninstall --no-input cymem")
-            #     # print("Installing spacy.")
-            #     # os.system("pip3 install spacy")
-            #     print("Installing file: %s" % self.parser_installation_file)
-            #     os.system("pip3 install {0}".format(self.parser_installation_file))
-
-            # except Exception as e:
-            #     print("Problem installing file: %s" % self.parser_installation_file)
-            #     pass
+    def __init__(self, language = None):
+        pass
                 
 
 
@@ -113,16 +100,16 @@ class Ibex():
         if language == 'spanish':
             try:
                 import es_core_news_md
-                print("Success importing en_core_web_md")
+                logger.info("Success importing en_core_web_md")
             except ImportError:
-                print("Error importing es_core_news_md")
+                logger.error("Error importing es_core_news_md")
                 sys.exit(-1)
         else:
             try:
                 import en_core_web_md
-                print("Success importing en_core_web_md")
+                logger.info("Success importing en_core_web_md")
             except ImportError:
-                print("Error importing en_core_web_md")
+                logger.error("Error importing en_core_web_md")
                 sys.exit(-1)
 
         if isinstance(document, List):
@@ -135,28 +122,17 @@ class Ibex():
         # if requested parser is not already in memory, try to load from spacy
         if parser_name not in PARSERS:
             try:
-                print("Trying to load parser.")
+                logger.info("Trying to load parser.")
                 if language == 'spanish':
                     PARSERS[parser_name] = es_core_news_md.load()
                 else:
                     PARSERS[parser_name] = en_core_web_md.load()
                 #PARSERS[parser_name] = spacy.load(parser_name)
             except Exception:
-                logger.exception("Problem loading parser")
-                print("SECOND ROUND: Try loading again.")
-                # os.system("pip3 install spacy")
-                # print("Installing file: %s" % self.parser_installation_file)
-                # os.system("pip3 install {0}".format(self.parser_installation_file))
-                try:
-                    if language == 'spanish':
-                        PARSERS[parser_name] = es_core_news_md.load()
-                    else:
-                        PARSERS[parser_name] = en_core_web_md.load()
-                except Exception:
-                    logger.exception("SECOND ROUND: Problem loading parser")
-                    sys.exit(-1)
+                logger.exception("Error loading parser")
+                sys.exit(-1)
         else:
-            print("Found parser %s in memory" % parser_name)
+            logger.info("Found parser %s in memory" % parser_name)
 
         def get_ents(doc):
             ''' prep, parse, then extract entities from doc text '''
@@ -171,12 +147,10 @@ class Ibex():
 if __name__ == '__main__':
     text = 'The Trump administration struggled on Monday to defend its policy of separating parents from their sons and daughters at the southern US border amid growing national outrage and the release of of sobbing children.'
     #client = Ibex()
-    if len(sys.argv)>=2:
-        parser_installation_file = sys.argv[1]
-        language = sys.argv[2]
+    if len(sys.argv)>1:
+        language = sys.argv[1]
     else:
-        parser_installation_file = "en_core_web_md-1.2.1.tar.gz"
         language = "english"
-    client = Ibex(parser_installation_file = parser_installation_file, language = language)
+    client = Ibex(language = language)
     result = client.get_entities(text)
-    print(result)
+    logger.info(result)
