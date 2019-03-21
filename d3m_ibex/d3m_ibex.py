@@ -22,7 +22,7 @@ REGEX_FILTERS = {
 
 SPACES_REGEX = re.compile('  +')
 
-logger = logging.getLogger('ibex_d3m_wrapper')
+logger = logging.getLogger('d3m_ibex')
 logger.setLevel(logging.DEBUG)
 
 def prep_text(text: str):
